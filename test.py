@@ -27,22 +27,33 @@ def strategy(x):
         else:
           return 0
 
+def strategy2(x):
+    if (x[4]>x[3])&(x[3]>x[2])&(x[2]>x[1])&(x[1]>x[0])&(x[5]>x[4]):
+        return 1
+    else:
+        if(x[4]>x[5])&(x[3]>x[4])&(x[2]>x[3]):
+          return -1
+        else:
+          return 0
+		  
 def strategylist(v):
     n,m=v.shape
     b=np.zeros((n,1))
     a=np.zeros((n,1))
     for i in range(n):
       b[i]=strategy(v[i])
+    b=b[::-1]
+    for i in range(n):
       if(i==0)&(b[i]==1):
           a[i]=1
       else:
           if(b[i]==1):
-              a[i]=b[i]
+              a[i]=1
           if(b[i]==-1):
-              a[i]=b[i]+1
+              a[i]=0
           if(b[i]==0):
               a[i]=a[i-1]
-    return a
+    return a,b
     
 
 def teststrategy(code,bdate,edate):
@@ -51,16 +62,17 @@ def teststrategy(code,bdate,edate):
     print "Start Date:"+bdate
     print "End Date"+edate
     print "Strategy:"
-    v=create(data['close'],type=2)
+    v=create(data['close'],n=6,type=2)
     n,m=v.shape
     x=pd.DataFrame()
     x['date']=data.index[0:n].values[::-1]
     x['close']=data['close'][0:n].values[::-1]
-    x['keep']=strategylist(v)
-    x.to_csv('stra.csv')
+    x['keep'],x['action']=strategylist(v)
+    x.to_csv("F:\\Github\\quant\\test.csv")
     
               
 
 teststrategy('000001','2015-12-01','2016-06-01')
+
 #data=ts.get_hist_data('000001')
 #print data.head()
